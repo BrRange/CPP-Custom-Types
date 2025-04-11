@@ -1,3 +1,6 @@
+#include <iostream>
+#include <array>
+
 template<unsigned char r, unsigned char c>
 class Matrix{
 
@@ -38,47 +41,74 @@ public:
         static_assert(c > '\x00');
     }
     
-    constexpr Matrix operator+(const Matrix<r, c> &m) const noexcept{
+    [[nodiscard]] constexpr Matrix<r, c> operator+(const Matrix<r, c> &m) const noexcept{
         Matrix<r, c> ret;
         for(unsigned short i(0); i < r * c; i++)
             ret.inner[i] = inner[i] + m.inner[i];
         return ret;
     }
-    constexpr Matrix operator+=(const Matrix<r, c> &m) noexcept{
+    constexpr Matrix<r, c> operator+=(const Matrix<r, c> &m) noexcept{
         for(unsigned short i(0); i < r * c; i++)
             inner[i] += m.inner[i];
         return std::move(*this);
     }
-    constexpr Matrix operator-(const Matrix<r, c> &m) const noexcept{
+    [[nodiscard]] constexpr Matrix<r, c> operator-(const Matrix<r, c> &m) const noexcept{
         Matrix<r, c> ret;
         for(unsigned short i(0); i < r * c; i++)
             ret.inner[i] = inner[i] - m.inner[i];
         return ret;
     }
-    constexpr Matrix operator-=(const Matrix<r, c> &m) noexcept{
+    constexpr Matrix<r, c> operator-=(const Matrix<r, c> &m) noexcept{
         for(unsigned short i(0); i < r * c; i++)
             inner[i] -= m.inner[i];
         return std::move(*this);
     }
-
-    inline constexpr Iterator begin() noexcept{
-        return Iterator(&inner[0]);
+    [[nodiscard]] constexpr Matrix<r, c> operator*(double d) const noexcept{
+        Matrix<r, c> ret;
+        for(unsigned short i(0); i < r * c; i++)
+            ret.inner[i] = inner[i] * d;
+        return ret;
+    }
+    constexpr Matrix<r, c> operator*=(double d) noexcept{
+        for(double &id : *this)
+            id *= d;
+        return std::move(*this);
+    }
+    [[nodiscard]] constexpr Matrix<r, c> operator/(double d) const noexcept{
+        Matrix<r, c> ret;
+        for(unsigned short i(0); i < r * c; i++)
+            ret.inner[i] = inner[i] / d;
+        return ret;
+    }
+    constexpr Matrix<r, c> operator/=(double d) noexcept{
+        for(double &id : *this)
+            id /= d;
+        return std::move(*this);
+    }
+    template<unsigned char e>
+    [[nodiscard]] constexpr Matrix<r, e> operator*(const Matrix<c, e> &m) const{
+        return {};
     }
 
-    inline constexpr Iterator end() noexcept{
+    [[nodiscard]] inline constexpr Iterator begin() noexcept{
+        return Iterator(&inner[0]);
+    }
+    [[nodiscard]] inline constexpr Iterator end() noexcept{
         return Iterator(&inner[r * c]);
     }
     
-    constexpr inline double get(unsigned char index) const{
+    [[nodiscard]] constexpr inline double &operator[](unsigned char index){
         return inner[index];
     }
     
-    constexpr inline double set(unsigned char index, double val){
-        return inner[index] = val;
+    [[nodiscard]] constexpr inline double operator[](unsigned char index) const{
+        return inner[index];
     }
     
-    constexpr inline void fill(double d) noexcept{
-        for(double &id : inner) id = d;
+    constexpr inline void fill(double (*d)(const unsigned char)) noexcept{
+        for(unsigned char i(0); i < r * c; i++){
+            operator[](i) = d(i);
+        }
     }
 };
 
@@ -87,7 +117,7 @@ std::ostream &operator<<(std::ostream &o, const Matrix<r, c> &mat){
     std::operator<<(o, "matrix [\n");
     for(unsigned short i(0); i < r * c; i++){
         if(i % c == 0) std::operator<<(o, "  ");
-        std::operator<<(o.operator<<(mat.get(i)), i == r * c - 1 ? '\0' : ',');
+        std::operator<<(o.operator<<(mat[i]), i == r * c - 1 ? '\0' : ',');
         if(i % c == c - 1) std::operator<<(o, '\n');
     }
     return std::operator<<(o, ']');
