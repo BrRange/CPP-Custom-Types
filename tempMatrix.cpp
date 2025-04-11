@@ -47,10 +47,10 @@ public:
             ret.inner[i] = inner[i] + m.inner[i];
         return ret;
     }
-    constexpr Matrix<r, c> operator+=(const Matrix<r, c> &m) noexcept{
+    constexpr Matrix<r, c> &operator+=(const Matrix<r, c> &m) noexcept{
         for(unsigned short i(0); i < r * c; i++)
             inner[i] += m.inner[i];
-        return std::move(*this);
+        return *this;
     }
     [[nodiscard]] constexpr Matrix<r, c> operator-(const Matrix<r, c> &m) const noexcept{
         Matrix<r, c> ret;
@@ -58,10 +58,10 @@ public:
             ret.inner[i] = inner[i] - m.inner[i];
         return ret;
     }
-    constexpr Matrix<r, c> operator-=(const Matrix<r, c> &m) noexcept{
+    constexpr Matrix<r, c> &operator-=(const Matrix<r, c> &m) noexcept{
         for(unsigned short i(0); i < r * c; i++)
             inner[i] -= m.inner[i];
-        return std::move(*this);
+        return *this;
     }
     [[nodiscard]] constexpr Matrix<r, c> operator*(double d) const noexcept{
         Matrix<r, c> ret;
@@ -69,10 +69,10 @@ public:
             ret.inner[i] = inner[i] * d;
         return ret;
     }
-    constexpr Matrix<r, c> operator*=(double d) noexcept{
+    constexpr Matrix<r, c> &operator*=(double d) noexcept{
         for(double &id : *this)
             id *= d;
-        return std::move(*this);
+        return *this;
     }
     [[nodiscard]] constexpr Matrix<r, c> operator/(double d) const noexcept{
         Matrix<r, c> ret;
@@ -80,10 +80,10 @@ public:
             ret.inner[i] = inner[i] / d;
         return ret;
     }
-    constexpr Matrix<r, c> operator/=(double d) noexcept{
+    constexpr Matrix<r, c> &operator/=(double d) noexcept{
         for(double &id : *this)
             id /= d;
-        return std::move(*this);
+        return *this;
     }
     template<unsigned char e>
     [[nodiscard]] constexpr Matrix<r, e> operator*(const Matrix<c, e> &m) const{
@@ -114,7 +114,7 @@ public:
 
 template<unsigned char r, unsigned char c>
 std::ostream &operator<<(std::ostream &o, const Matrix<r, c> &mat){
-    std::operator<<(o, "matrix [\n");
+    std::operator<<(o, "Matrix [\n");
     for(unsigned short i(0); i < r * c; i++){
         if(i % c == 0) std::operator<<(o, "  ");
         std::operator<<(o.operator<<(mat[i]), i == r * c - 1 ? '\0' : ',');
