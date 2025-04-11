@@ -9,25 +9,25 @@ class Matrix{
         
     public:
         inline constexpr Iterator(double *ptr) noexcept: ptr(ptr) {}
-        inline constexpr double &operator*() const{
+        [[nodiscard]] inline constexpr double &operator*() const{
             return *ptr;
         }
-        inline constexpr double *operator->() const noexcept{
+        [[nodiscard]] inline constexpr double *operator->() const noexcept{
             return ptr;
         }
-        inline constexpr Iterator &operator++() noexcept{
+        [[nodiscard]] inline constexpr Iterator &operator++() noexcept{
             ptr++;
             return *this;
         }  
-        inline constexpr Iterator operator++(int) noexcept{
+        [[nodiscard]] inline constexpr Iterator operator++(int) noexcept{
             Iterator tmp = *this;
             ptr++;
             return tmp;
         }
-        bool operator==(const Iterator& ite) const{
+        [[nodiscard]] inline bool operator==(const Iterator& ite) const{
             return ptr == ite.ptr;
         }
-        bool operator!=(const Iterator& ite) const{
+        [[nodiscard]] inline bool operator!=(const Iterator& ite) const{
             return ptr != ite.ptr;
         }
     };
